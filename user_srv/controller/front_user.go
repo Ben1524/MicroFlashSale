@@ -42,12 +42,6 @@ func (*FrontUserHandler) FrontUserRegister(ctx context.Context, req *pb.FrontUse
 	return nil
 }
 
-//type FrontUserHandler interface {
-//	FrontUserRegister(context.Context, *FrontUserRequest, *FrontUserResponse) error
-//	FrontUserSendEmail(context.Context, *FrontUserMailRequest, *FrontUserResponse) error
-//	FrontUserLogin(context.Context, *FrontUserRequest, *FrontUserResponse) error
-//}
-
 func (*FrontUserHandler) FrontUserSendEmail(ctx context.Context, req *pb.FrontUserMailRequest, res *pb.FrontUserResponse) error {
 	email := req.Email
 	// 随机生成6位数验证码
@@ -86,5 +80,4 @@ func (*FrontUserHandler) FrontUserLogin(ctx context.Context, req *pb.FrontUserRe
 		res.UserName = email
 	}
 	return nil
-
 }

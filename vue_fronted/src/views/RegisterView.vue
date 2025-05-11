@@ -176,7 +176,9 @@ const sendVerificationCode = async () => {
     return;
   }
   try {
-    const response = await axios.post('/send_verification_code', { email: registerForm.email });
+    console.log(registerForm.email);
+    const response = await axios.post('http://localhost:8082/user/send_email', { email: registerForm.email });
+
     if (response.data.success) {
       alert('验证码已发送，请检查邮箱');
     } else {

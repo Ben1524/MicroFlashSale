@@ -10,7 +10,7 @@
             <el-button type="text" class="login-link">
                 /
             </el-button>
-            <el-button type="text" @click="$router.push('/register')" class="login-link">
+            <el-button type="text" @click="$router.push('/register')" class="register-link">
                 注册
             </el-button>
         </div>
@@ -55,5 +55,15 @@ export default class HomeView extends Vue {}
   justify-content: flex-end;
   //padding: 10px;
   font-size:30px
+}
+
+.login-link {
+  color: #409eff;
+  font-size: 20px;
+  margin-right: 10px;
+}
+.register-link {
+  color: #67c23a;
+  font-size: 20px;
 }
 </style>
