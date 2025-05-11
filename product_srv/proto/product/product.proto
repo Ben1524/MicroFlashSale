@@ -1,0 +1,92 @@
+syntax = "proto3";
+package product_srv;
+
+option go_package = "./;product_srv";
+
+message Product{
+    int32 id = 1;
+    string name = 2;
+    float price = 3;
+    int32 num = 4;
+    string unit = 5;
+    string pic = 6;
+    string desc = 7;
+    string create_time = 8;
+}
+
+message ProductsRequest {
+  int32 current_page = 1;
+  int32 pagesize = 2;
+}
+
+
+message ProductsResponse {
+  int32 code = 1;
+  string msg = 2;
+  repeated Product products =3;
+  int32 total= 4;
+  int32 current = 5;
+  int32 page_size = 6;
+}
+
+message ProductAddRequest {
+  string name = 1;
+  float price = 2;
+  int32 num = 3;
+  string unit = 4;
+  string pic = 5;
+  string desc = 6;
+  string create_time = 7;
+}
+
+message ProductAddResponse {
+  int32 code = 1;
+  string msg = 2;
+}
+
+
+message ProductEditRequest {
+    int32 id = 1;
+    string name = 2;
+    float price = 3;
+    int32 num = 4;
+    string unit = 5;
+    string pic = 6;
+    string desc = 7;
+    string create_time = 8;
+}
+
+message ProductEditResponse {
+    int32 code = 1;
+    string msg = 2;
+}
+
+
+
+message ProductDelRequest {
+    int32 id = 1;
+}
+
+message ProductDelResponse {
+    int32 code = 1;
+    string msg = 2;
+}
+
+
+message ProductToEditRequest {
+    int32 id = 1;
+}
+message ProductToEditResponse {
+    int32 code = 1;
+    string msg = 2;
+    Product product = 3;
+}
+
+service Products{
+  rpc ProductsList(ProductsRequest) returns (ProductsResponse){}  // 获取商品列表
+  rpc ProductAdd(ProductAddRequest) returns (ProductAddResponse){}  // 添加商品
+  rpc ProductDel(ProductDelRequest) returns (ProductDelResponse){}  // 删除商品
+  rpc ProductToEdit(ProductToEditRequest) returns (ProductToEditResponse){}  // 获取商品详情
+  rpc ProductDoEdit(ProductEditRequest) returns (ProductEditResponse){}  // 编辑商品
+
+}

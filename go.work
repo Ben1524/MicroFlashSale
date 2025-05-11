@@ -1,0 +1,8 @@
+go 1.23.3
+
+use (
+	./product_srv
+	./seckill_srv
+	./user_srv
+	./web
+)
