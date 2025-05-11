@@ -25,7 +25,7 @@ func main() {
 		micro.Registry(consulReg),
 	)
 	// Register handler
-	if err := pb.RegisterZhiliaoseckillsrvHandler(srv.Server(), new(handler.Zhiliaoseckillsrv)); err != nil {
+	if err := pb.RegisterSeckillsrvHandler(srv.Server(), new(handler.Seckillsrv)); err != nil {
 		logger.Fatal(err)
 	}
 	// Run service

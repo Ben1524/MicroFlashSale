@@ -27,7 +27,7 @@ func main() {
 		micro.Registry(consulReg),
 	)
 
-	serviceSeckill := seckill.NewZhiliaoseckillsrvService("seckill_srv", srv.Client())
+	serviceSeckill := seckill.NewSeckillsrvService("seckill_srv", srv.Client())
 	req := &seckill.CallRequest{
 		Name: "abc",
 	}

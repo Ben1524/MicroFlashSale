@@ -4,7 +4,7 @@ package seckill_srv;
 
 option go_package = "./proto;seckill_srv";
 
-service Zhiliaoseckillsrv {
+service Seckillsrv {
 	rpc Call(CallRequest) returns (CallResponse) {}
 	rpc ClientStream(stream ClientStreamRequest) returns (ClientStreamResponse) {}
 	rpc ServerStream(ServerStreamRequest) returns (stream ServerStreamResponse) {}

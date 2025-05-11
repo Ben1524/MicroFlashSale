@@ -10,15 +10,15 @@ import (
 	pb "seckill_srv/proto"
 )
 
-type Zhiliaoseckillsrv struct{}
+type Seckillsrv struct{}
 
-func (e *Zhiliaoseckillsrv) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
-	logger.Infof("Received Zhiliaoseckillsrv.Call request: %v", req)
+func (e *Seckillsrv) Call(ctx context.Context, req *pb.CallRequest, rsp *pb.CallResponse) error {
+	logger.Infof("Received Seckillsrv.Call request: %v", req)
 	rsp.Msg = "Hello " + req.Name
 	return nil
 }
 
-func (e *Zhiliaoseckillsrv) ClientStream(ctx context.Context, stream pb.Zhiliaoseckillsrv_ClientStreamStream) error {
+func (e *Seckillsrv) ClientStream(ctx context.Context, stream pb.Seckillsrv_ClientStreamStream) error {
 	var count int64
 	for {
 		req, err := stream.Recv()
@@ -34,8 +34,8 @@ func (e *Zhiliaoseckillsrv) ClientStream(ctx context.Context, stream pb.Zhiliaos
 	}
 }
 
-func (e *Zhiliaoseckillsrv) ServerStream(ctx context.Context, req *pb.ServerStreamRequest, stream pb.Zhiliaoseckillsrv_ServerStreamStream) error {
-	logger.Infof("Received Zhiliaoseckillsrv.ServerStream request: %v", req)
+func (e *Seckillsrv) ServerStream(ctx context.Context, req *pb.ServerStreamRequest, stream pb.Seckillsrv_ServerStreamStream) error {
+	logger.Infof("Received Seckillsrv.ServerStream request: %v", req)
 	for i := 0; i < int(req.Count); i++ {
 		logger.Infof("Sending %d", i)
 		if err := stream.Send(&pb.ServerStreamResponse{
@@ -48,7 +48,7 @@ func (e *Zhiliaoseckillsrv) ServerStream(ctx context.Context, req *pb.ServerStre
 	return nil
 }
 
-func (e *Zhiliaoseckillsrv) BidiStream(ctx context.Context, stream pb.Zhiliaoseckillsrv_BidiStreamStream) error {
+func (e *Seckillsrv) BidiStream(ctx context.Context, stream pb.Seckillsrv_BidiStreamStream) error {
 	for {
 		req, err := stream.Recv()
 		if err == io.EOF {
