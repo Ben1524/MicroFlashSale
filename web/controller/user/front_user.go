@@ -3,11 +3,14 @@ package user
 import (
 	"context"
 	"github.com/gin-gonic/gin"
+	mgrpc "github.com/go-micro/plugins/v4/client/grpc"
 	"github.com/go-micro/plugins/v4/registry/consul"
+	mhttp "github.com/go-micro/plugins/v4/server/grpc"
 	"go-micro.dev/v4"
 	"log"
 	"net/http"
 	"sync"
+	"time"
 	front_user "user_srv/proto/front_user"
 )
 
@@ -16,19 +19,29 @@ var (
 	once             sync.Once
 )
 var (
-	service = "user_srv"
+	name    = "user_srv"
 	version = "latest"
 )
 
 func initService() {
 	once.Do(func() {
+		// 创建 Consul 注册中心
 		consulReg := consul.NewRegistry()
-		srv := micro.NewService(
-			micro.Name("user_client"), // 客户端名称
-			micro.Registry(consulReg), // 使用 Consul 作为服务发现)
+		service := micro.NewService(
+			micro.RegisterInterval(time.Second*10),
+			micro.Client(mgrpc.NewClient()),
+			micro.Server(mhttp.NewServer()),
 		)
-		srv.Init()
-		frontUserService = front_user.NewFrontUserService("user_srv", srv.Client())
+		opts := []micro.Option{
+			micro.Registry(consulReg),
+			micro.Name(name),
+			micro.Version(version),
+		}
+
+		service.Init(opts...)
+
+		// 创建 FrontUser 服务的客户端
+		frontUserService = front_user.NewFrontUserService("user_srv", service.Client())
 	})
 }
 func SendEmail(ctx *gin.Context) {

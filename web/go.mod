@@ -9,6 +9,7 @@ require (
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-micro/plugins/v4/client/grpc v1.2.1
 	github.com/go-micro/plugins/v4/registry/consul v1.2.1
+	github.com/go-micro/plugins/v4/server/http v1.2.2
 	go-micro.dev/v4 v4.11.0
 )
 

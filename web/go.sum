@@ -67,6 +67,8 @@ github.com/go-micro/plugins/v4/client/grpc v1.2.1 h1:7xAwZRCO6mdUtBHsYIQs1/eCTdh
 github.com/go-micro/plugins/v4/client/grpc v1.2.1/go.mod h1:3fDuzyfYLwEImn8+lkhKl3W4Ay1jFevkTeC32PBlgQs=
 github.com/go-micro/plugins/v4/registry/consul v1.2.1 h1:3wctYMtstwQLCjoJ1HA6mKGGFF1hcdKDv5MzHakB1jE=
 github.com/go-micro/plugins/v4/registry/consul v1.2.1/go.mod h1:wTat7/K9XQ+i64VbbcMYFcEwipYfSgJM51HcA/sgsM4=
+github.com/go-micro/plugins/v4/server/http v1.2.2 h1:UK2/09AU0zV3wHELuR72TZzVU2vTUhbx9qrRGrQSIWg=
+github.com/go-micro/plugins/v4/server/http v1.2.2/go.mod h1:YuAjaSPxcn3LI8j2FUsqx0Rxunrj4YwDV41Ax76rLl0=
 github.com/go-playground/assert/v2 v2.2.0 h1:JvknZsQTYeFEAhQwI4qEt9cyV5ONwRHC+lYKSsYSR8s=
 github.com/go-playground/assert/v2 v2.2.0/go.mod h1:VDjEfimB/XKnb+ZQfWdccd7VUvScMdVu0Titje2rxJ4=
 github.com/go-playground/locales v0.14.1 h1:EWaQ/wswjilfKLTECiXz7Rh+3BjFhfDFKv/oXslEjJA=
