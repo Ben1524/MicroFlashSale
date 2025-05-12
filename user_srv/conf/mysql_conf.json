@@ -1,7 +1,7 @@
 {
-  "host": "localhost",
+  "host": "derp.cxkcpp.top",
   "port": 3306,
-  "user": "root",
+  "user": "stores",
   "pwd": "123456",
   "database": "stores"
 }
