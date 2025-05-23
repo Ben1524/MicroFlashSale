@@ -2,9 +2,11 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/go-micro/plugins/v4/registry/consul"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
+	conf "product_srv/conf"
 	"product_srv/handler"
 	pb "product_srv/proto/product"
 	seckill "product_srv/proto/seckill"
@@ -12,8 +14,9 @@ import (
 )
 
 var (
-	service = "product_srv"
-	version = "latest"
+	service = conf.CONFIG.MicroServices[0].Name
+	version = conf.CONFIG.MicroServices[0].Version
+	address = fmt.Sprintf("%s:%d", conf.CONFIG.MicroServices[0].Host, conf.CONFIG.MicroServices[0].Port)
 )
 
 func main() {
@@ -21,7 +24,7 @@ func main() {
 	consulReg := consul.NewRegistry()
 	srv := micro.NewService()
 	srv.Init(
-		micro.Address(":8083"),
+		micro.Address(address),
 		micro.Name(service),
 		micro.Version(version),
 		micro.Registry(consulReg),

@@ -21,6 +21,7 @@ var AdminUserExpireDuration = time.Hour * 2
 var AdminUserSecretKey = []byte("Admin")
 
 // GenToken 生成 JWT 令牌
+// Jwt == Payload + Header + Signature 载荷+头部+签名
 func GenToken(UserName string, expireDuration time.Duration, secretKey []byte) (string, error) {
 	// 生成一个新的 token
 	user := UserToken{
