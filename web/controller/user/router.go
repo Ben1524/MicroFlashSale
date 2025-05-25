@@ -6,8 +6,8 @@ func Router(router *gin.RouterGroup) {
 
 	//// 用户端注册登录
 	router.POST("/send_email", SendEmail)
-	//router.POST("/front_user_register", FrontUserRegister)
-	//router.POST("/front_user_login", FrontUserLogin)
+	router.POST("/front_user_login", FrontUserLogin)
+	router.POST("/front_user_register", FrontUserRegister)
 	//
 	//// 管理端登录
 	//router.POST("/admin_login", AdminLogin)

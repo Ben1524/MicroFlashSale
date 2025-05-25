@@ -9,7 +9,6 @@ import (
 )
 
 // 对请求进行JWT验证的中间件
-
 func JwtTokenAdminValid(ctx *gin.Context) {
 
 	jwt_head := ctx.Request.Header.Get("Authorization") // Authorization 字段的格式通常为 Bearer <token>

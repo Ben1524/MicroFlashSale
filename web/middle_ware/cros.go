@@ -14,7 +14,7 @@ func CrosMiddleWare(c *gin.Context) {
 	}
 
 	if origin == "" {
-		log.Fatal("origin is empty")
+		log.Println("origin is empty")
 	}
 
 	// 设置响应头，允许指定的来源进行跨域请求

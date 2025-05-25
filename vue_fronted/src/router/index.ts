@@ -25,7 +25,9 @@ const router = createRouter({
   }
 ]})
 
-// 路由守卫
+// to 表示目标路由
+// from 表示当前路由
+// next 用于控制路由跳转
 router.beforeEach((to,from,next) => {
   // to 满足条件的url放过
   if (to.path == "/" || to.path == "/login" || to.path == "/register" || to.path == "/admin"){

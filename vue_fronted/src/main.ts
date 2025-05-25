@@ -5,6 +5,9 @@ import store from './store'
 import ElementPlus from 'element-plus'
 import 'element-plus/dist/index.css'
 import axios from "axios";
+import auth from './auth/auth'
 const app = createApp(App);
-app.config.globalProperties.$axios = axios
-createApp(App).use(ElementPlus).use(store).use(router).mount('#app')
+// 提供全局对象
+app.provide('axios', axios);
+app.provide('auth', auth);
+app.use(ElementPlus).use(store).use(router).mount('#app')
