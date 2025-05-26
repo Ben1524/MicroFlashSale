@@ -10,7 +10,7 @@ func Router(router *gin.RouterGroup) {
 	router.POST("/front_user_register", FrontUserRegister)
 	//
 	//// 管理端登录
-	//router.POST("/admin_login", AdminLogin)
+	router.POST("/admin_login", AdminLogin)
 	//
 	//router.GET("/get_front_users", middle_ware.JwtTokenValid, FrontUserList)
 

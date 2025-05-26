@@ -22,7 +22,12 @@ const router = createRouter({
     path:'/register',
     name:'register',
     component: () => import('../views/RegisterView.vue')
-  }
+  },
+  {
+    path:'/admin',
+    name:'admin',
+    component: () => import('../admin/AdminLogin.vue')
+  },
 ]})
 
 // to 表示目标路由
