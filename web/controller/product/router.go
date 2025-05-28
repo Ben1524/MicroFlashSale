@@ -1,10 +1,13 @@
 package product
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"web/middle_ware"
+)
 
 func Router(router *gin.RouterGroup) {
 
-	router.GET("/get_product_list", Test)
+	router.GET("/products", middle_ware.JwtTokenAdminValid, GetProductList) // 获取商品列表
 
 	//// 商品列表
 	//router.GET("/get_product_list", GetProductList)

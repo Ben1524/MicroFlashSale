@@ -4,7 +4,6 @@
     <div class="admin-login-container">
       <h1 class="admin-title">管理员登录</h1>
       <p class="admin-tip">仅限系统管理员访问</p>
-
       <el-form
           ref="loginFormRef"
           :model="loginForm"
@@ -34,8 +33,8 @@
           <el-button type="primary" @click="handleLogin">
             登录后台
           </el-button>
-          <el-button @click="resetForm">
-            重置
+          <el-button type="info" @click="resetForm">
+            重置密码
           </el-button>
         </el-form-item>
       </el-form>
@@ -79,29 +78,31 @@ const rules = reactive<FormRules<typeof loginForm>>({
 
 // 登录处理
 const handleLogin = async () => {
-  const form = loginFormRef.value;
-  if (!form) return;
+const form = loginFormRef.value;
+if (!form) return;
 
-  await form.validate(valid => {
-    if (valid) {
-      axios.post('http://localhost:8082/user/admin_login', {
+await form.validate(async (valid) => {
+  if (valid) {
+    try {
+      const res = await axios.post('http://localhost:8082/user/admin_login', {
         username: loginForm.username,
-        password: loginForm.password
-      }).then((res: any) => {
-        if (res.data.success) {
-          // 保存管理员Token（假设auth模块有专门方法）
-          auth.setAdminToken(res.data.token);
-          // 跳转至管理员后台
-          router.push('/admin/dashboard');
-          alert('登录成功，欢迎进入管理后台');
-        } else {
-          alert(`登录失败：${res.data.message}`);
-        }
-      }).catch(() => {
-        alert('网络请求失败，请检查连接');
+        password: loginForm.password,
       });
+
+      // 检查状态码
+      if (res.status === 200 && res.data.success) {
+        auth.setAdminAuth(res.data.token,loginForm.username); // 假设存在设置管理员认证的函数
+        router.push('/admin/dashboard');
+        alert('登录成功，欢迎进入管理后台');
+      } else {
+        alert(`登录失败：${res.data.message}`);
+      }
+    } catch (error) {
+      console.error('请求错误:', error); // 打印错误信息
+      alert('网络请求失败，请检查连接');
     }
-  });
+  }
+});
 };
 
 // 重置表单

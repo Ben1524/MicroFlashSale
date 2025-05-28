@@ -1,6 +1,9 @@
 package user
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/gin-gonic/gin"
+	"web/middle_ware"
+)
 
 func Router(router *gin.RouterGroup) {
 
@@ -11,7 +14,7 @@ func Router(router *gin.RouterGroup) {
 	//
 	//// 管理端登录
 	router.POST("/admin_login", AdminLogin)
-	//
-	//router.GET("/get_front_users", middle_ware.JwtTokenValid, FrontUserList)
+	//中间件类似处理函数
+	router.GET("/users", middle_ware.JwtTokenAdminValid, GetUserList)
 
 }
