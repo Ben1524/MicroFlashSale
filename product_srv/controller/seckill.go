@@ -3,7 +3,7 @@ package controller
 import (
 	"context"
 	"product_srv/data_source"
-	models "product_srv/model"
+	models "product_srv/models"
 	pb "product_srv/proto/seckill"
 	"time"
 )

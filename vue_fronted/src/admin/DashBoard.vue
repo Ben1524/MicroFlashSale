@@ -136,6 +136,7 @@ onMounted(() => {
 </script>
 
 <style scoped>
+
 .admin-dashboard {
   height: 100vh;
 }

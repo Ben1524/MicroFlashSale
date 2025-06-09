@@ -5,8 +5,8 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"log"
-	"time"
-	"user_srv/models"
+	"product_srv/models"
+
 )
 
 var Db *gorm.DB
@@ -45,7 +45,7 @@ func init() {
 	sqlDB.SetConnMaxLifetime(time.Minute * 30)
 
 	log.Println("Connected to the database and configured connection limits!")
-	if err := Db.AutoMigrate(&models.FrontUserModel{}, &models.AdminUserModel{}); err != nil {
+	if err := Db.AutoMigrate(&models.ProductModel{}, &models.SecKills{}); err != nil {
 		log.Fatal(err)
 	}
 }

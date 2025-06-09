@@ -100,3 +100,59 @@ func GetProductList(ctx *gin.Context) {
 		"total":    response.Total,
 	})
 }
+
+func AddProduct(ctx *gin.Context) {
+	initProductService()
+	// 定义请求结构体，绑定 JSON 数据
+	var request struct {
+		Name       string  `json:"name" binding:"required"`
+		Num        int64   `json:"num" binding:"required,gte=0"`   // 数量必须大于等于0
+		Price      float32 `json:"price" binding:"required,gte=0"` // 价格必须大于等于0
+		Unit       string  `json:"unit" binding:"required"`
+		Desc       string  `json:"desc"`
+		Pic        string  `json:"pic"`
+		CreateTime string  `json:"create_time"`
+	}
+
+	// 使用 ShouldBindJSON 解析 JSON 请求
+	if err := ctx.ShouldBindJSON(&request); err != nil {
+		log.Printf("JSON 解析失败: %v", err)
+		ctx.JSON(http.StatusBadRequest, gin.H{
+			"error":   "无效的请求格式",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	productAddResponse, err := productService.ProductAdd(context.Background(), &product.ProductAddRequest{
+		Name:       request.Name,
+		Num:        request.Num,
+		Price:      request.Price,
+		Unit:       request.Unit,
+		Desc:       request.Desc,
+		Pic:        request.Pic,
+		CreateTime: request.CreateTime,
+	})
+
+	if err != nil {
+		log.Printf("微服务调用失败: %v", err)
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "添加产品服务暂时不可用",
+			"details": err.Error(),
+		})
+		return
+	}
+
+	if productAddResponse == nil {
+		ctx.JSON(http.StatusInternalServerError, gin.H{
+			"error":   "添加产品服务返回空响应",
+			"details": "请稍后再试",
+		})
+		return
+	}
+
+	ctx.JSON(http.StatusOK, gin.H{
+		"success": true,
+		"message": "产品添加成功",
+	})
+}

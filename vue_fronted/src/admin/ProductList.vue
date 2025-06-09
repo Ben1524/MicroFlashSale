@@ -1,21 +1,26 @@
 <template>
-  <div class="user-list-container">
+  <div class="product-list-container">
     <!-- 顶部搜索区域 -->
     <div class="search-bar mb-20">
-      <el-row :gutter="20">
+      <el-row :gutter="14" justify="start">
+        <el-col :span="2">
+          <el-button type="primary" @click="addProducts">
+            添加商品
+          </el-button>
+        </el-col>
         <el-col :span="6">
           <el-input
               v-model="searchQuery"
               placeholder="搜索邮箱"
               prefix-icon="el-icon-search"
-              @keyup.enter="fetchUsers"
+              @keyup.enter="fetchProducts"
           ></el-input>
         </el-col>
         <el-col :span="6">
           <el-select
               v-model="currentStatus"
               placeholder="筛选状态"
-              @change="fetchUsers"
+              @change="fetchProducts"
           >
             <el-option label="全部" value="-1"></el-option>
             <el-option label="启用" value="1"></el-option>
@@ -51,6 +56,13 @@
       </el-table>
     </div>
 
+    <ProductAddDialog
+        :visible="dialogVisible"
+        @close="dialogVisible = false"
+        @success="fetchProducts"
+/>
+
+
     <!-- 分页控件 -->
     <div class="pagination-container">
       <el-pagination
@@ -71,6 +83,7 @@ import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import axios from "axios";
 import router from "@/router";
+import ProductAddDialog from "@/admin/ProductAddDialog.vue";
 
 // 状态管理
 const searchQuery = ref('');
@@ -82,6 +95,7 @@ const users = ref<any[]>([]);
 const isLoading = ref(false);
 const sortField = ref('');
 const sortOrder = ref('');
+let dialogVisible = ref(false);
 
 // 日期格式化
 const formatDate = (dateString: string) => {
@@ -113,7 +127,7 @@ const getPagedData = (data: any[], page: number, size: number) => {
 };
 
 // 获取用户列表（使用测试数据）
-const fetchUsers = async () => {
+const fetchProducts = async () => {
 
 
   let curP = currentPage.value;
@@ -200,33 +214,41 @@ const fetchUsers = async () => {
 const handleSortChange = ({ prop, order }: { prop: string; order: string }) => {
   sortField.value = prop;
   sortOrder.value = order === 'ascending' ? 'asc' : 'desc';
-  fetchUsers();
+  fetchProducts();
 };
+
+
+const addProducts = () => {
+  // router.push('/admin/product/add');
+  dialogVisible.value = true; // 打开添加商品对话框
+  console.log('打开添加商品对话框');
+};
+
 
 const handlePageSizeChange = (size: number) => {
   pageSize.value = size;
   currentPage.value = 1;
-  fetchUsers();
+  fetchProducts();
 };
 
 const handleCurrentPageChange = (page: number) => {
   currentPage.value = page;
-  fetchUsers();
+  fetchProducts();
 };
 
 // 初始化加载
 onMounted(() => {
-  fetchUsers();
+  fetchProducts();
 });
 </script>
 
 
 <style scoped>
-.user-list-container {
+.product-list-container {
   display: flex;
   flex-direction: column;
   height: 70vh;
-  padding: 20px;
+  padding: 30px;
   background-color: #fff;
 }
 

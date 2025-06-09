@@ -9,6 +9,8 @@ func Router(router *gin.RouterGroup) {
 
 	router.GET("/products", middle_ware.JwtTokenAdminValid, GetProductList) // 获取商品列表
 
+	router.POST("/products", middle_ware.JwtTokenAdminValid, AddProduct) // 添加商品
+
 	//// 商品列表
 	//router.GET("/get_product_list", GetProductList)
 	//// 商品详情

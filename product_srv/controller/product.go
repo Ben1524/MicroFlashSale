@@ -2,7 +2,7 @@ package controller
 
 import (
 	"context"
-	models "product_srv/model"
+	models "product_srv/models"
 	pb "product_srv/proto/product"
 	"time"
 	"user_srv/data_source"
