@@ -16,43 +16,43 @@ service SecKills {
 }
 
 message FrontSecKillRequest{
-    int32 current_page = 1;
-    int32 pagesize = 2;
+    int64 current_page = 1;
+    int64 pagesize = 2;
 
 }
 
 message FrongSecKillDetailResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
     SecKill seckill = 3;
 
 }
 
 message FrontSecKillResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
     repeated SecKill seckill_list = 3;
-    int32 current = 4;
-    int32 page_size = 5;
-    int32 total_page = 6;
+    int64 current = 4;
+    int64 page_size = 5;
+    int64 total_page = 6;
 
 }
 
 
 message SecKillToEditResponse {
-    int32 code =1;
+    int64 code =1;
     string msg = 2;
     SecKill seckill =3;
-    repeated Product products_no =4;
+    repeated SecKillProductRequest products_no =4;
 
 }
 
 message SecKillDelRequest {
-    int32 id = 1;
+    int64 id = 1;
 }
 
 message SecKillResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
 }
 message ProductRequest {
@@ -60,39 +60,39 @@ message ProductRequest {
 }
 
 message ProductResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
-    repeated Product products =3;
+    repeated SecKillProductRequest products =3;
 }
 
-message Product {
-    int32 id = 1;
+message SecKillProductRequest {
+    int64 id = 1;
     string pname = 2;
 }
 
 
 message SecKillsRequest {
-    int32 current_page = 1;
-    int32 pagesize = 2;
+    int64 current_page = 1;
+    int64 pagesize = 2;
 }
 
 
 message SecKillsResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
     repeated SecKill seckills =3;
-    int32 total= 4;
-    int32 current = 5;
-    int32 page_size = 6;
+    int64 total= 4;
+    int64 current = 5;
+    int64 page_size = 6;
 }
 
 
 message SecKill {
-    int32 id = 1;
+    int64 id = 1;
     string name = 2;
     float price = 3;
-    int32 num = 4;
-    int32 pid = 5;
+    int64 num = 4;
+    int64 pid = 5;
     string pname = 6;
     string start_time = 7;
     string end_time = 8;

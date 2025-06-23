@@ -57,21 +57,27 @@
 <script setup lang="ts">
 import { reactive, ref } from 'vue';
 import type { ComponentSize, FormInstance, FormRules } from 'element-plus';
-import axios from 'axios';
+import apiClient from '@/services/api';
+import { inject } from 'vue';
+import { useRouter } from 'vue-router';
 
 interface LoginRuleForm {
   email: string;
   password: string;
 }
 
+// 注入全局对象
+const axios = inject('axios');
+import auth from '@/auth/auth'
+const router = useRouter();
 const formSize = ref<ComponentSize>('large');
-const loginRuleFormRef = ref<FormInstance>();
-const loginForm = reactive<LoginRuleForm>({
+const loginRuleFormRef = ref<FormInstance>(); // 表单实例
+const loginForm = reactive<LoginRuleForm>({ // 表单数据
   email: '',
   password: '',
 });
 
-const rules = reactive<FormRules<LoginRuleForm>>({
+const rules = reactive<FormRules<LoginRuleForm>>({ // 表单的验证规则
   email: [
     { required: true, message: 'Please input your email', trigger: 'blur' },
     { type: 'email', message: 'Please input a valid email address', trigger: ['blur', 'change'] },
@@ -88,9 +94,16 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       try {
-        const response = await axios.post('/login', loginForm);
+        const response = await axios.post('http://localhost:8082/user/front_user_login', {
+          email: loginForm.email,
+          password: loginForm.password,
+        });
         if (response.data.success) {
           alert(response.data.message);
+          console.log(response.data)
+          // 保存jwt-token
+          auth.setFrontAuth(response.data.token,loginForm.email)
+          router.push("/")
         } else {
           alert(response.data.message);
         }
@@ -129,6 +142,9 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
   justify-content: center;
   align-items: center;
   z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
 }
 
 .animated-background {

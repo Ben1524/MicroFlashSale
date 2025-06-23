@@ -21,6 +21,7 @@ var AdminUserExpireDuration = time.Hour * 2
 var AdminUserSecretKey = []byte("Admin")
 
 // GenToken 生成 JWT 令牌
+// Jwt == Payload + Header + Signature 载荷+头部+签名
 func GenToken(UserName string, expireDuration time.Duration, secretKey []byte) (string, error) {
 	// 生成一个新的 token
 	user := UserToken{
@@ -30,9 +31,9 @@ func GenToken(UserName string, expireDuration time.Duration, secretKey []byte) (
 		},
 		UserName, // 使用了结构体隐式字段，这里要按照顺序来
 	}
-	// 创建一个带有声明的 JWT 令牌，即JWT的
+	// 创建一个带有声明的 JWT 令牌，即JWT的载荷部分
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, user) //jwt.NewWithClaims(jwt.SigningMethodHS256, user) 会自动生成包含算法（HS256）和类型（JWT）的头部。
-	// 对令牌进行签名，jwt签名和加密
+	// 对令牌进行签名，jwt签名和加密,secretKey是加密的盐
 	return token.SignedString(secretKey)
 }
 
@@ -43,7 +44,7 @@ func AuthToken(tokenString string, secretKey []byte) (*UserToken, error) {
 	})
 	if err != nil {
 		return nil, err
-	}
+	} // 如果解析失败，返回 nil 和错误信息
 	if claims, ok := token.Claims.(*UserToken); ok && token.Valid {
 		return claims, nil
 	}

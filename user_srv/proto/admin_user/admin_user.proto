@@ -11,24 +11,25 @@ service AdminUser {
 
 
 message FrontUsersRequest {
-    int32 current_page = 1;
-    int32 pagesize = 2;
+    int64 current_page = 1;
+    int64 pagesize = 2;
 }
 
 message FrontUsersResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
     repeated FrontUserMessage front_users =3;
-    int32 total= 4;
-    int32 current = 5;
-    int32 page_size = 6;
+    int64 total= 4;
+    int64 current = 5;
+    int64 page_size = 6;
 }
 
 message FrontUserMessage {
-    string email = 1;
-    string desc = 2;
-    string status = 3;
-    string create_time = 4;
+    int64 id = 1;
+    string email = 2;
+    string desc = 3;
+    string status = 4;
+    string create_time = 5;
 }
 
 
@@ -40,7 +41,7 @@ message AdminUserRequest {
 
 
 message AdminUserResponse {
-    int32 code = 1;
+    int64 code = 1;
     string msg = 2;
     string user_name = 3;
 }

@@ -3,6 +3,7 @@ package middle_ware
 import (
 	"github.com/gin-gonic/gin"
 	"log"
+	"net/http"
 )
 
 // 处理跨域请求的中间件
@@ -14,7 +15,7 @@ func CrosMiddleWare(c *gin.Context) {
 	}
 
 	if origin == "" {
-		log.Fatal("origin is empty")
+		log.Println("origin is empty")
 	}
 
 	// 设置响应头，允许指定的来源进行跨域请求
@@ -30,7 +31,7 @@ func CrosMiddleWare(c *gin.Context) {
 	// 如果请求方法是 OPTIONS，通常是浏览器在发送实际请求之前的预检请求
 	if c.Request.Method == "OPTIONS" {
 		// 直接返回 204 状态码，表示请求已成功处理，但没有返回内容
-		c.AbortWithStatus(204)
+		c.AbortWithStatus(http.StatusNoContent)
 		// 结束当前处理流程，不再继续执行后续的中间件或处理函数
 		return
 	}

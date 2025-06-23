@@ -2,18 +2,18 @@ package controller
 
 import (
 	"context"
-	models "product_srv/model"
+	models "product_srv/models"
 	pb "product_srv/proto/product"
 	"time"
 	"user_srv/data_source"
 )
 
-type Products struct{}
+type ProductHandler struct{}
 
-func (*Products) ProductsList(ctx context.Context, req *pb.ProductsRequest, res *pb.ProductsResponse) error {
+func (*ProductHandler) ProductsList(ctx context.Context, req *pb.ProductsRequest, res *pb.ProductsResponse) error {
 	currentPage := req.CurrentPage
 	pagesize := req.Pagesize
-	products := []models.Products{}
+	products := []models.ProductModel{}
 
 	offsetNum := pagesize * (currentPage - 1)
 	result := data_source.Db.Limit(int(pagesize)).Offset(int(offsetNum)).Find(&products)
@@ -25,16 +25,16 @@ func (*Products) ProductsList(ctx context.Context, req *pb.ProductsRequest, res 
 	res.Code = 200
 	res.Msg = "获取数据成功"
 	var count int64
-	products_count := []models.Products{}
+	products_count := []models.ProductModel{}
 	data_source.Db.Find(&products_count).Count(&count) //用于获取总条数
 
 	products_response := []*pb.Product{} // 定义一个空的切片用于存取待返回的产品数据
 	for _, product := range products {
 		product_tmp := &pb.Product{
-			Id:         int32(product.Id),
+			Id:         product.Id,
 			Name:       product.Name,
 			Price:      product.Price,
-			Num:        int32(product.Num),
+			Num:        product.Num,
 			Unit:       product.Unit, // 单位
 			Desc:       product.Desc,
 			Pic:        product.Pic,
@@ -43,15 +43,15 @@ func (*Products) ProductsList(ctx context.Context, req *pb.ProductsRequest, res 
 		products_response = append(products_response, product_tmp)
 	}
 	res.Products = products_response
-	res.Total = int32(count)  // 总条数
+	res.Total = count         // 总条数
 	res.Current = currentPage // 当前页
 	return nil
 }
 
-func (*Products) ProductAdd(ctx context.Context, req *pb.ProductAddRequest, res *pb.ProductAddResponse) error {
-	product := models.Products{
+func (*ProductHandler) ProductAdd(ctx context.Context, req *pb.ProductAddRequest, res *pb.ProductAddResponse) error {
+	product := models.ProductModel{
 		Name:       req.Name,
-		Num:        int(req.Num),
+		Num:        req.Num,
 		Price:      req.Price,
 		Unit:       req.Unit,
 		Desc:       req.Desc,
@@ -69,8 +69,8 @@ func (*Products) ProductAdd(ctx context.Context, req *pb.ProductAddRequest, res 
 	return nil
 }
 
-func (*Products) ProductDel(ctx context.Context, req *pb.ProductDelRequest, res *pb.ProductDelResponse) error {
-	result := data_source.Db.Where("id=?", req.Id).Delete(&models.Products{}) // 删除数据，Delete参数用于指定删除的表
+func (*ProductHandler) ProductDel(ctx context.Context, req *pb.ProductDelRequest, res *pb.ProductDelResponse) error {
+	result := data_source.Db.Where("id=?", req.Id).Delete(&models.ProductModel{}) // 删除数据，Delete参数用于指定删除的表
 	if result.Error != nil {
 		res.Code = 500
 		res.Msg = "删除失败"
@@ -82,8 +82,8 @@ func (*Products) ProductDel(ctx context.Context, req *pb.ProductDelRequest, res 
 }
 
 // 这个方法用于编辑产品数据,用于查找待编辑的产品数据
-func (*Products) ProductToEdit(ctx context.Context, req *pb.ProductToEditRequest, res *pb.ProductToEditResponse) error {
-	product := models.Products{}
+func (*ProductHandler) ProductToEdit(ctx context.Context, req *pb.ProductToEditRequest, res *pb.ProductToEditResponse) error {
+	product := models.ProductModel{}
 	result := data_source.Db.Where("id=?", req.Id).Find(&product)
 	if result.Error != nil {
 		res.Code = 500
@@ -93,9 +93,9 @@ func (*Products) ProductToEdit(ctx context.Context, req *pb.ProductToEditRequest
 	res.Code = 200
 	res.Msg = "获取数据成功"
 	res.Product = &pb.Product{
-		Id:         int32(product.Id),
+		Id:         product.Id,
 		Name:       product.Name,
-		Num:        int32(product.Num),
+		Num:        product.Num,
 		Price:      product.Price,
 		Unit:       product.Unit,
 		Desc:       product.Desc,
@@ -106,11 +106,11 @@ func (*Products) ProductToEdit(ctx context.Context, req *pb.ProductToEditRequest
 }
 
 // 编辑产品数据,
-func (*Products) ProductDoEdit(ctx context.Context, req *pb.ProductEditRequest, res *pb.ProductEditResponse) error {
-	product := models.Products{
-		Id:         int(req.Id),
+func (*ProductHandler) ProductDoEdit(ctx context.Context, req *pb.ProductEditRequest, res *pb.ProductEditResponse) error {
+	product := models.ProductModel{
+		Id:         req.Id,
 		Name:       req.Name,
-		Num:        int(req.Num),
+		Num:        req.Num,
 		Price:      req.Price,
 		Unit:       req.Unit,
 		Desc:       req.Desc,

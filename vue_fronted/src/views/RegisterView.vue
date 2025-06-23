@@ -154,7 +154,11 @@ const submitForm = async (formEl: FormInstance | undefined) => {
   await formEl.validate(async (valid, fields) => {
     if (valid) {
       try {
-        const response = await axios.post('/register', registerForm);
+        const response = await axios.post('http://localhost:8082/user/front_user_register', {
+          email: registerForm.email,
+          password: registerForm.password,
+          code: registerForm.code,
+        })
         if (response.data.success) {
           alert('注册成功！请登录');
           router.push('/login');

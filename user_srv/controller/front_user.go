@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"crypto"
 	"github.com/patrickmn/go-cache"
 	"math/rand"
 	"time"
@@ -14,6 +13,7 @@ import (
 
 type FrontUserHandler struct{}
 
+// 服务端的session管理
 var CodeKVCache = cache.New(60*time.Second, 10*time.Second) // 60秒过期，10秒清理一次，清理过期数据
 
 func (*FrontUserHandler) FrontUserRegister(ctx context.Context, req *pb.FrontUserRequest, res *pb.FrontUserResponse) error {
@@ -26,12 +26,10 @@ func (*FrontUserHandler) FrontUserRegister(ctx context.Context, req *pb.FrontUse
 		res.Msg = "验证码已过期或者不正确"
 		return nil
 	} else {
-		pwd_to_md5 := crypto.MD5.New()     // md5加密
-		pwd_to_md5.Write([]byte(password)) // 写入密码
-		pwd_md5 := pwd_to_md5.Sum(nil)     // 返回加密结果
+		pwd_md5 := utils.Md5Str(password) // 返回加密结果
 		new_front_user := &models.FrontUserModel{
 			Email:      email,
-			Password:   string(pwd_md5),
+			Password:   pwd_md5,
 			Status:     1,
 			CreateTime: time.Now(),
 		}
@@ -64,14 +62,12 @@ func (*FrontUserHandler) FrontUserSendEmail(ctx context.Context, req *pb.FrontUs
 func (*FrontUserHandler) FrontUserLogin(ctx context.Context, req *pb.FrontUserRequest, res *pb.FrontUserResponse) error {
 	email := req.Email
 	password := req.Password
-	pwd_to_md5 := crypto.MD5.New()     // md5加密
-	pwd_to_md5.Write([]byte(password)) // 写入密码
-	pwd_md5 := pwd_to_md5.Sum(nil)     // 返回加密结果
-	var pb models.FrontUserModel
+	pwd_md5 := utils.Md5Str(password) // 返回加密结果
+	var FUM models.FrontUserModel
 
 	var count int64
-	data_source.Db.Where("email = ? AND password = ?", email, string(pwd_md5)).First(&pb).Count(&count)
-	if pb.Id == 0 {
+	data_source.Db.Where("email = ? AND password = ?", email, string(pwd_md5)).First(&FUM).Count(&count)
+	if FUM.Id == 0 {
 		res.Code = 500
 		res.Msg = "登录失败"
 	} else {

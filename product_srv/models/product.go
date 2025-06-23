@@ -2,11 +2,11 @@ package models
 
 import "time"
 
-type Products struct {
-	Id         int
+type ProductModel struct {
+	Id         int64
 	Name       string
 	Price      float32 `gorm:"type:decimal(11,2)"`
-	Num        int
+	Num        int64
 	Unit       string
 	Pic        string
 	Desc       string
@@ -15,7 +15,7 @@ type Products struct {
 	SecKills []SecKills `gorm:"ForeignKey:PId;AssiciationForeignKey:Id"` // 有多个秒杀活动
 }
 
-func (Products) TableName() string {
+func (ProductModel) TableName() string {
 	return "products"
 
 }

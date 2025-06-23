@@ -4,7 +4,7 @@
     <el-header>
         <div class="login-register" >
             <el-button type="text" @click="$router.push('/login')" class="login-link">
-                登录
+                {{loginButtonText}}
             </el-button>
             <!--空格分割-->
             <el-button type="text" class="login-link">
@@ -33,18 +33,30 @@
 
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import { Options, Vue } from 'vue-class-component';
 import HelloWorld from '@/components/HelloWorld.vue';
 import GoodsListView from "@/views/GoodsListView.vue"; // @ is an alias to /src
+import {onActivated, ref, inject, onMounted} from 'vue'
+import auth from '@/auth/auth'
+var loginButtonText=ref('登录')
 
-@Options({
-  components: {
-    GoodsListView,
-    HelloWorld,
-  },
+// 当页面跳转时判断
+onActivated(() => {
+    console.log(auth.frontUsername)
+    if (auth.frontUsername!=null){
+       loginButtonText.value=auth.frontUsername
+    }
 })
-export default class HomeView extends Vue {}
+
+onMounted(()=>{
+  console.log(auth.frontUsername)
+    if (auth.frontUsername!=null){
+       loginButtonText.value=auth.frontUsername
+    }
+})
+
+
 </script>
 
 
