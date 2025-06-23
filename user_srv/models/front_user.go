@@ -3,7 +3,7 @@ package models
 import "time"
 
 type FrontUserModel struct {
-	Id         int
+	Id         int64
 	Email      string
 	Password   string
 	Desc       string

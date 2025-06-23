@@ -1,16 +1,17 @@
 package main
 
 import (
-	"context"
 	"fmt"
+	grpcc "github.com/go-micro/plugins/v4/client/grpc"
 	"github.com/go-micro/plugins/v4/registry/consul"
+	grpcs "github.com/go-micro/plugins/v4/server/grpc"
 	"go-micro.dev/v4"
 	"go-micro.dev/v4/logger"
+	"go-micro.dev/v4/registry"
 	conf "product_srv/conf"
-	"product_srv/handler"
-	pb "product_srv/proto/product"
-	seckill "product_srv/proto/seckill"
-	"time"
+	"product_srv/controller"
+	product "product_srv/proto/product"
+	//seckill "product_srv/proto/seckill"
 )
 
 var (
@@ -20,42 +21,33 @@ var (
 )
 
 func main() {
-	// Create service
-	consulReg := consul.NewRegistry()
-	srv := micro.NewService()
-	srv.Init(
-		micro.Address(address),
-		micro.Name(service),
-		micro.Version(version),
-		micro.Registry(consulReg),
+	// 创建 Consul 注册中心，明确指定地址
+	consulReg := consul.NewRegistry(
+		// 如果 Consul 不在本地运行，需要指定实际地址
+		registry.Addrs("localhost:8500"),
 	)
 
-	serviceSeckill := seckill.NewSeckillsrvService("seckill_srv", srv.Client())
-	req := &seckill.CallRequest{
-		Name: "abc",
+	// 创建微服务实例
+	srv := micro.NewService(
+		micro.Client(grpcc.NewClient()),
+		micro.Server(grpcs.NewServer()),
+	)
+	opts := []micro.Option{
+		micro.Registry(consulReg), // 使用 Consul 作为服务发现
+		micro.Name(service),
+		micro.Version(version),
+		micro.Address(address),
 	}
+	// 初始化服务
+	srv.Init(opts...)
 
-	// 重试机制
-	maxRetries := 3
-	for i := 0; i < maxRetries; i++ {
-		rsp, err := serviceSeckill.Call(context.Background(), req)
-		if err != nil {
-			if i == maxRetries-1 {
-				logger.Fatalf("Failed after %d retries: %v", maxRetries, err)
-			}
-			logger.Warnf("Retry %d: %v", i+1, err)
-			time.Sleep(2 * time.Second) // 等待 2 秒后重试
-			continue
-		}
-		logger.Infof("rsp: %v", rsp)
-		break
-	}
-
-	// Register handler
-	if err := pb.RegisterZhiliaoproductsrvHandler(srv.Server(), new(handler.Zhiliaoproductsrv)); err != nil {
+	// Register handlers
+	if err := product.RegisterProductsHandler(srv.Server(), new(controller.ProductHandler)); err != nil {
 		logger.Fatal(err)
 	}
-
+	//if err := seckill.RegisterSecKillsHandler(srv.Server(), new(controller.SecKillsHandler)); err != nil {
+	//	logger.Fatal(err)
+	//}
 	// Run service
 	if err := srv.Run(); err != nil {
 		logger.Fatal(err)

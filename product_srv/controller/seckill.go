@@ -3,25 +3,14 @@ package controller
 import (
 	"context"
 	"product_srv/data_source"
-	models "product_srv/model"
+	models "product_srv/models"
 	pb "product_srv/proto/seckill"
 	"time"
 )
 
-//type SecKillsHandler interface {
-//	SecKillList(context.Context, *SecKillsRequest, *SecKillsResponse) error
-//	GetProducts(context.Context, *ProductRequest, *ProductResponse) error
-//	SecKillAdd(context.Context, *SecKill, *SecKillResponse) error
-//	SecKillDel(context.Context, *SecKillDelRequest, *SecKillResponse) error
-//	SecKillToEdit(context.Context, *SecKillDelRequest, *SecKillToEditResponse) error
-//	SecKillDoEdit(context.Context, *SecKill, *SecKillResponse) error
-//	FrontSecKillList(context.Context, *FrontSecKillRequest, *FrontSecKillResponse) error
-//	FrontSecKillDetail(context.Context, *SecKillDelRequest, *FrongSecKillDetailResponse) error
-//}
+type SecKillsHandler struct{}
 
-type SecKills struct{}
-
-func (s *SecKills) SecKillList(ctx context.Context, req *pb.SecKillsRequest, res *pb.SecKillsResponse) error {
+func (s *SecKillsHandler) SecKillList(ctx context.Context, req *pb.SecKillsRequest, res *pb.SecKillsResponse) error {
 
 	// 获取秒杀列表
 	currentPage := req.CurrentPage
@@ -48,15 +37,15 @@ func (s *SecKills) SecKillList(ctx context.Context, req *pb.SecKillsRequest, res
 
 	for _, seckill := range seckills {
 		seckill_rep := pb.SecKill{}
-		seckill_rep.Id = int32(seckill.Id)
+		seckill_rep.Id = int64(seckill.Id)
 		seckill_rep.Name = seckill.Name
 		seckill_rep.Price = seckill.Price
-		seckill_rep.Num = int32(seckill.Num)
-		product := models.Products{
+		seckill_rep.Num = int64(seckill.Num)
+		product := models.ProductModel{
 			Id: seckill.PId,
 		}
 		data_source.Db.First(&product) // 根据ID查询产品，结果存储在product中，因为gorm中一行数据也算一个抽象表，这个表的ID就是产品的ID
-		seckill_rep.Pid = int32(seckill.PId)
+		seckill_rep.Pid = int64(seckill.PId)
 		seckill_rep.Pname = product.Name
 		seckill_rep.StartTime = seckill.StartTime.Format("2006-01-02 15:04:05")
 		seckill_rep.EndTime = seckill.EndTime.Format("2006-01-02 15:04:05")
@@ -67,14 +56,14 @@ func (s *SecKills) SecKillList(ctx context.Context, req *pb.SecKillsRequest, res
 
 	res.Current = currentPage
 	res.PageSize = pageSize
-	res.Total = int32(count)
+	res.Total = int64(count)
 	res.Seckills = seckills_rep
 	return nil
 
 }
-func (*SecKills) GetProducts(ctx context.Context, req *pb.ProductRequest, res *pb.ProductResponse) error {
+func (*SecKillsHandler) GetProducts(ctx context.Context, req *pb.ProductRequest, res *pb.ProductResponse) error {
 	// 获取产品列表
-	products := []models.Products{}
+	products := []models.ProductModel{}
 	result := data_source.Db.Find(&products)
 	if result.Error != nil {
 		res.Code = 500
@@ -83,10 +72,10 @@ func (*SecKills) GetProducts(ctx context.Context, req *pb.ProductRequest, res *p
 	}
 	res.Code = 200
 	res.Msg = "获取产品列表成功"
-	var products_rep []*pb.Product
+	var products_rep []*pb.SecKillProductRequest
 	for _, product := range products {
-		product_rep := pb.Product{}
-		product_rep.Id = int32(product.Id)
+		product_rep := pb.SecKillProductRequest{}
+		product_rep.Id = int64(product.Id)
 		product_rep.Pname = product.Name
 		products_rep = append(products_rep, &product_rep)
 		products_rep = append(products_rep, &product_rep)
@@ -96,7 +85,7 @@ func (*SecKills) GetProducts(ctx context.Context, req *pb.ProductRequest, res *p
 }
 
 // 请求把秒杀产品添加到数据库
-func (*SecKills) SecKillAdd(ctx context.Context, req *pb.SecKill, res *pb.SecKillResponse) error {
+func (*SecKillsHandler) SecKillAdd(ctx context.Context, req *pb.SecKill, res *pb.SecKillResponse) error {
 	name := req.Name
 	price := req.Price
 	num := req.Num
@@ -109,8 +98,8 @@ func (*SecKills) SecKillAdd(ctx context.Context, req *pb.SecKill, res *pb.SecKil
 	seckill := models.SecKills{
 		Name:       name,
 		Price:      price,
-		Num:        int(num),
-		PId:        int(pid),
+		Num:        num,
+		PId:        pid,
 		StartTime:  time_start_time,
 		EndTime:    time_end_time,
 		Status:     0,
@@ -128,7 +117,7 @@ func (*SecKills) SecKillAdd(ctx context.Context, req *pb.SecKill, res *pb.SecKil
 	return nil
 }
 
-func (*SecKills) SecKillDel(ctx context.Context, req *pb.SecKillDelRequest, res *pb.SecKillResponse) error {
+func (*SecKillsHandler) SecKillDel(ctx context.Context, req *pb.SecKillDelRequest, res *pb.SecKillResponse) error {
 	id := req.Id
 	result := data_source.Db.Delete(&models.SecKills{}, id)
 	if result.Error != nil {
@@ -140,7 +129,7 @@ func (*SecKills) SecKillDel(ctx context.Context, req *pb.SecKillDelRequest, res 
 	res.Msg = "删除成功"
 	return nil
 }
-func (*SecKills) SecKillToEdit(ctx context.Context, req *pb.SecKillDelRequest, res *pb.SecKillToEditResponse) error {
+func (*SecKillsHandler) SecKillToEdit(ctx context.Context, req *pb.SecKillDelRequest, res *pb.SecKillToEditResponse) error {
 	id := req.Id
 	seckill := models.SecKills{}
 	result := data_source.Db.First(&seckill, id)
@@ -152,15 +141,15 @@ func (*SecKills) SecKillToEdit(ctx context.Context, req *pb.SecKillDelRequest, r
 	res.Code = 200
 	res.Msg = "获取秒杀产品成功"
 	seckill_rep := pb.SecKill{}
-	seckill_rep.Id = int32(seckill.Id)
+	seckill_rep.Id = int64(seckill.Id)
 	seckill_rep.Name = seckill.Name
 	seckill_rep.Price = seckill.Price
-	seckill_rep.Num = int32(seckill.Num)
-	product := models.Products{
+	seckill_rep.Num = int64(seckill.Num)
+	product := models.ProductModel{
 		Id: seckill.PId,
 	}
 	data_source.Db.First(&product) // 根据ID查询产品，结果存储在product中，因为gorm中一行数据也算一个抽象表，这个表的ID就是产品的ID
-	seckill_rep.Pid = int32(seckill.PId)
+	seckill_rep.Pid = int64(seckill.PId)
 	seckill_rep.Pname = product.Name
 	seckill_rep.StartTime = seckill.StartTime.Format("2006-01-02 15:04:05")
 	seckill_rep.EndTime = seckill.EndTime.Format("2006-01-02 15:04:05")
@@ -170,7 +159,7 @@ func (*SecKills) SecKillToEdit(ctx context.Context, req *pb.SecKillDelRequest, r
 }
 
 // 秒杀活动更新
-func (*SecKills) SecKillDoEdit(ctx context.Context, req *pb.SecKill, res *pb.SecKillResponse) error {
+func (*SecKillsHandler) SecKillDoEdit(ctx context.Context, req *pb.SecKill, res *pb.SecKillResponse) error {
 	id := req.Id
 	name := req.Name
 	price := req.Price
@@ -183,11 +172,11 @@ func (*SecKills) SecKillDoEdit(ctx context.Context, req *pb.SecKill, res *pb.Sec
 	time_end_time, _ := time.Parse("2006-01-02 15:04:05", end_time)
 
 	seckill := models.SecKills{
-		Id:         int(id),
+		Id:         id,
 		Name:       name,
 		Price:      price,
-		Num:        int(num),
-		PId:        int(pid),
+		Num:        num,
+		PId:        pid,
 		StartTime:  time_start_time,
 		EndTime:    time_end_time,
 		Status:     0,
@@ -209,10 +198,10 @@ func (*SecKills) SecKillDoEdit(ctx context.Context, req *pb.SecKill, res *pb.Sec
 /*
 // 秒杀活动列表
 */
-func (*SecKills) FrontSecKillList(ctx context.Context, req *pb.FrontSecKillRequest, res *pb.FrontSecKillResponse) error {
+func (*SecKillsHandler) FrontSecKillList(ctx context.Context, req *pb.FrontSecKillRequest, res *pb.FrontSecKillResponse) error {
 	tomorrow_time := time.Now().Add(24 * time.Hour)
 	//2025-01-09 10:37:33
-	tomorrow_time_str := tomorrow_time.Format("2006-01-02 15:04:05")
+	//tomorrow_time_str := tomorrow_time.Format("2006-01-02 15:04:05")
 
 	currentPage := req.CurrentPage
 	pagesize := req.Pagesize
@@ -231,12 +220,12 @@ func (*SecKills) FrontSecKillList(ctx context.Context, req *pb.FrontSecKillReque
 
 	for _, seckill := range seckills {
 		seckill_rep := pb.SecKill{}
-		seckill_rep.Id = int32(seckill.Id)
+		seckill_rep.Id = int64(seckill.Id)
 		seckill_rep.Name = seckill.Name
 		seckill_rep.Price = seckill.Price
-		seckill_rep.Num = int32(seckill.Num)
-		seckill_rep.Pid = int32(seckill.PId)
-		product := models.Products{}
+		seckill_rep.Num = int64(seckill.Num)
+		seckill_rep.Pid = int64(seckill.PId)
+		product := models.ProductModel{}
 		data_source.Db.Where("id = ?", seckill.PId).Find(&product)
 		seckill_rep.Pname = product.Name
 		seckill_rep.Pic = product.Pic
@@ -250,7 +239,7 @@ func (*SecKills) FrontSecKillList(ctx context.Context, req *pb.FrontSecKillReque
 	}
 
 	seckills_count := []models.SecKills{}
-	var count int32
+	var count int64
 	data_source.Db.Where("start_time <= ?", tomorrow_time).Where("status = ?", 0).Find(&seckills_count).Count(&count)
 
 	res.Code = 200
@@ -264,7 +253,7 @@ func (*SecKills) FrontSecKillList(ctx context.Context, req *pb.FrontSecKillReque
 
 }
 
-func (*SecKills) FrontSecKillDetail(context.Context, req *pb.SecKillDelRequest, res *pb.FrongSecKillDetailResponse) error {
+func (*SecKillsHandler) FrontSecKillDetail(ctx *context.Context, req *pb.SecKillDelRequest, res *pb.FrongSecKillDetailResponse) error {
 
 	id := req.Id
 
@@ -276,15 +265,15 @@ func (*SecKills) FrontSecKillDetail(context.Context, req *pb.SecKillDelRequest, 
 		return result.Error
 	}
 
-	product := models.Products{}
+	product := models.ProductModel{}
 
 	data_source.Db.Where("id = ?", seckill.PId).Find(&product)
 	seckill_rep := pb.SecKill{
-		Id:         int32(seckill.Id),
+		Id:         int64(seckill.Id),
 		Name:       seckill.Name,
-		Num:        int32(seckill.Num),
+		Num:        int64(seckill.Num),
 		Price:      seckill.Price,
-		Pid:        int32(seckill.PId),
+		Pid:        int64(seckill.PId),
 		Pname:      product.Name,
 		Pic:        product.Pic,
 		PPrice:     product.Price,
@@ -297,4 +286,5 @@ func (*SecKills) FrontSecKillDetail(context.Context, req *pb.SecKillDelRequest, 
 	res.Code = 200
 	res.Msg = "获取秒杀产品成功"
 	res.Seckill = &seckill_rep
+	return nil
 }

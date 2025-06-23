@@ -2,6 +2,8 @@ package controller
 
 import (
 	"context"
+	"fmt"
+	"log"
 	"user_srv/data_source"
 	models "user_srv/models"
 	pb "user_srv/proto/admin_user"
@@ -15,17 +17,21 @@ import (
 type AdminUserHandler struct{}
 
 func (a *AdminUserHandler) AdminUserLogin(ctx context.Context, req *pb.AdminUserRequest, rsp *pb.AdminUserResponse) error {
+	log.Printf("AdminUserLogin called with request: %v", req)
 	UserName := req.Username
 	Password := req.Password
 	var count int64
 	data_source.Db.Where("user_name = ? AND password = ?", UserName, Password).First(&models.AdminUserModel{}).Count(&count)
 	if count > 0 {
+		log.Printf("User %s logged in successfully", UserName)
 		rsp.Msg = "登录成功"
 		rsp.UserName = UserName
 		rsp.Code = 200
 	} else {
 		rsp.Msg = "登录失败"
 		rsp.Code = 500
+		// 返回错误信息
+		return fmt.Errorf("登录失败，用户名或密码错误")
 	}
 	return nil
 }
@@ -50,13 +56,14 @@ func (a *AdminUserHandler) FrontUserList(ctx context.Context, req *pb.FrontUsers
 		}
 		create_time := frontUser.CreateTime.Format("2006-01-02 15:04:05")
 		rsp.FrontUsers = append(rsp.FrontUsers, &pb.FrontUserMessage{
+			Id:         frontUser.Id,
 			Email:      frontUser.Email,
 			Desc:       frontUser.Desc,
 			Status:     status_str,
 			CreateTime: create_time,
 		})
 		if index == len(frontUsers)-1 {
-			rsp.Total = int32(total)
+			rsp.Total = total
 			rsp.Current = currentPage
 			rsp.PageSize = pageSize
 		}

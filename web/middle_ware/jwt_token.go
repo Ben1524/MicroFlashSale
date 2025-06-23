@@ -84,6 +84,7 @@ func JwtTokenFrontValid(ctx *gin.Context) {
 		return
 	}
 
+	// 将解析后的用户名存储到gin的上下文中，
 	ctx.Set("front_user_name", user.UserName) // 将解析后的用户名存储到gin的上下文中，
 	ctx.Next()                                // 调用下一个中间件或处理函数
 }

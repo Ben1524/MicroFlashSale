@@ -13,7 +13,7 @@
         <el-main>
           <el-form-item
               label="邮箱"
-              prop="email" 
+              prop="email"
               :label-width="formSize === 'default' ? '80px' : '60px'"
           >
             <el-input
@@ -142,6 +142,9 @@ const options = Array.from({ length: 10000 }).map((_, idx) => ({
   justify-content: center;
   align-items: center;
   z-index: 1;
+  width: 100%;
+  height: 100%;
+  max-width: 400px;
 }
 
 .animated-background {
