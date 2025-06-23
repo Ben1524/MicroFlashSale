@@ -13,8 +13,8 @@ func JwtTokenAdminValid(ctx *gin.Context) {
 
 	jwt_head := ctx.Request.Header.Get("Authorization") // Authorization 字段的格式通常为 Bearer <token>
 	if jwt_head == "" {
-		ctx.JSON(401, gin.H{
-			"code": 401,
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": http.StatusUnauthorized,
 			"msg":  "请携带token",
 		})
 		ctx.Abort() // 中止请求，不再执行后续的处理函数
@@ -27,7 +27,7 @@ func JwtTokenAdminValid(ctx *gin.Context) {
 	token := auths[1]
 	if len(token) == 0 || len(bearer) == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
-			"code": 401,
+			"code": http.StatusUnauthorized,
 			"msg":  "请携带正确格式的token",
 		})
 		ctx.Abort()
@@ -38,7 +38,7 @@ func JwtTokenAdminValid(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"code": 401,
+			"code": http.StatusUnauthorized,
 			"msg":  "无效的token",
 		})
 		ctx.Abort()
@@ -52,8 +52,8 @@ func JwtTokenAdminValid(ctx *gin.Context) {
 func JwtTokenFrontValid(ctx *gin.Context) {
 	jwt_head := ctx.Request.Header.Get("Authorization")
 	if jwt_head == "" {
-		ctx.JSON(401, gin.H{
-			"code": 401,
+		ctx.JSON(http.StatusUnauthorized, gin.H{
+			"code": http.StatusUnauthorized,
 			"msg":  "请携带token",
 		})
 		ctx.Abort() // 中止请求，不再执行后续的处理函数
@@ -66,7 +66,7 @@ func JwtTokenFrontValid(ctx *gin.Context) {
 	token := auths[1]
 	if len(token) == 0 || len(bearer) == 0 {
 		ctx.JSON(http.StatusOK, gin.H{
-			"code": 401,
+			"code": http.StatusUnauthorized,
 			"msg":  "请携带正确格式的token",
 		})
 		ctx.Abort()
@@ -77,7 +77,7 @@ func JwtTokenFrontValid(ctx *gin.Context) {
 
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
-			"code": 401,
+			"code": http.StatusUnauthorized,
 			"msg":  "无效的token",
 		})
 		ctx.Abort()
